@@ -1,0 +1,67 @@
+[tool.poetry]
+name = "window-management"
+version = "0.1.0"
+description = "A tool to manage windows on a Mac."
+authors = ["Falko Schindler <mail@falkoschindler.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+nicegui = "^2.10.1"
+pyobjc-framework-Quartz = "^11.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "^2.3.2"
+mypy = "^1.14.1"
+pylint = "^3.3.3"
+pre-commit = "^4.1.0"
+ruff = "^0.9.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.11"
+install_types = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "Quartz",
+]
+ignore_missing_imports = true
+
+[tool.pylint]
+max-line-length = 120
+disable = [
+    "C0111", # Missing docstring (in function/class/method)
+]
+
+[tool.pylint.TYPECHECK]
+generated-members = "Quartz.*"
+
+[tool.ruff]
+indent-width = 4
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "I",  # isort
+    "E",  # pycodestyle
+    "W",  # pycodestyle
+    "B",  # bugbear
+    "F",  # pyflakes
+    "UP", # pyupgrade
+    "RUF", # ruff
+    "PL", # pylint
+    "NPY201", # NumPy 2.0
+]
+fixable = [
+    "I",  # isort
+    "RUF022", # `__all__` is not sorted
+]

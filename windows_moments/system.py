@@ -1,0 +1,58 @@
+import subprocess
+
+import Quartz
+
+from .moment import Bounds, Moment
+
+
+def collect_windows() -> dict[str, Bounds]:
+    result: dict[str, Bounds] = {}
+    for window in Quartz.CGWindowListCopyWindowInfo(Quartz.kCGWindowListOptionOnScreenOnly |
+                                                    Quartz.kCGWindowListExcludeDesktopElements,
+                                                    Quartz.kCGNullWindowID):
+        if window.get(Quartz.kCGWindowLayer, 0) != 0:
+            continue
+        app_name = window.get(Quartz.kCGWindowOwnerName, '')
+        bounds = window.get(Quartz.kCGWindowBounds)
+        if app_name and bounds:
+            result[app_name] = Bounds(
+                x=int(bounds['X']),
+                y=int(bounds['Y']),
+                width=int(bounds['Width']),
+                height=int(bounds['Height']),
+            )
+    return result
+
+
+def apply_moment(moment: Moment) -> None:
+    windows = Quartz.CGWindowListCopyWindowInfo(Quartz.kCGWindowListOptionOnScreenOnly |
+                                                Quartz.kCGWindowListExcludeDesktopElements,
+                                                Quartz.kCGNullWindowID)
+    for window in windows:
+        window_name = window.get(Quartz.kCGWindowOwnerName, '')
+        if window_name not in moment.windows:
+            continue
+        bounds = moment.windows[window_name]
+        script = f'''
+            tell application "{window_name}"
+                try
+                    set the bounds of the first window to {{{bounds.x}, {bounds.y}, {bounds.right}, {bounds.bottom}}}
+                on error
+                    # Some apps might need system events instead
+                    tell application "System Events"
+                        tell process "{window_name}"
+                            try
+                                set position of window 1 to {{{bounds.x}, {bounds.y}}}
+                                set size of window 1 to {{{bounds.width}, {bounds.height}}}
+                            end try
+                        end tell
+                    end tell
+                end try
+            end tell
+        '''
+        try:
+            result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True, check=False)
+            if result.returncode != 0:
+                print(f'Warning: Could not move window for {window_name}: {result.stderr}')
+        except subprocess.CalledProcessError as e:
+            print(f'Failed to apply moment for {window_name}: {e}')

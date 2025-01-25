@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"python.analysis.supportRestructuredText": true,
+		"ruff.enable": true
+	},
+}
