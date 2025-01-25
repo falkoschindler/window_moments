@@ -24,6 +24,19 @@ def collect_windows() -> dict[str, Bounds]:
     return result
 
 
+def collect_screens() -> dict[str, Bounds]:
+    result: dict[str, Bounds] = {}
+    for display in Quartz.CGGetActiveDisplayList(32, None, None)[1]:
+        bounds = Quartz.CGDisplayBounds(display)
+        result[str(display)] = Bounds(
+            x=int(bounds.origin.x),
+            y=int(bounds.origin.y),
+            width=int(bounds.size.width),
+            height=int(bounds.size.height),
+        )
+    return result
+
+
 def apply_moment(moment: Moment) -> None:
     windows = Quartz.CGWindowListCopyWindowInfo(Quartz.kCGWindowListOptionOnScreenOnly |
                                                 Quartz.kCGWindowListExcludeDesktopElements,

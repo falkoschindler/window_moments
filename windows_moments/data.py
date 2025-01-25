@@ -4,7 +4,7 @@ from datetime import datetime
 from nicegui import app, ui
 
 from .moment import Moment
-from .system import apply_moment, collect_windows
+from .system import apply_moment, collect_screens, collect_windows
 
 
 def capture_moment() -> None:
@@ -12,6 +12,7 @@ def capture_moment() -> None:
         id=str(uuid.uuid4()),
         name=datetime.now().strftime(r'%Y-%m-%d %H:%M:%S'),
         windows=collect_windows(),
+        screens=collect_screens(),
     )
     save_moment(moment)
 
@@ -43,15 +44,24 @@ def delete_moment(moment: Moment) -> None:
 @ui.refreshable
 def show_moments():
     moments = [Moment.from_dict(m) for m in app.storage.general.get('moments', {}).values()]
+    if not moments:
+        ui.label('No moments').classes('text-xl absolute-center')
+        return
     for moment in moments:
         with ui.card():
             ui.input(value=moment.name).props('borderless').classes('text-2xl font-medium') \
                 .on('keydown.enter', lambda e, m=moment: rename_moment(m, e.sender.value)) \
                 .on('keydown.escape', lambda e, m=moment: rename_moment(m, e.sender.value)) \
                 .on('blur', lambda e, m=moment: rename_moment(m, e.sender.value))
-            code = ui.code('\n'.join(f'{app_name}: {bounds.x}, {bounds.y}, {bounds.width}, {bounds.height}'
-                                     for app_name, bounds in moment.windows.items()))
-            code.copy_button.delete()
+
+            windows = ui.code('\n'.join(f'{app_name}: {bounds.x}, {bounds.y}, {bounds.width}, {bounds.height}'
+                                        for app_name, bounds in moment.windows.items()))
+            windows.copy_button.delete()
+
+            screens = ui.code('\n'.join(f'{screen_name}: {bounds.x}, {bounds.y}, {bounds.width}, {bounds.height}'
+                                        for screen_name, bounds in moment.screens.items()))
+            screens.copy_button.delete()
+
             with ui.card_actions().classes('w-full justify-end'):
                 ui.button('Apply', icon='check', on_click=lambda moment=moment: apply_moment(moment)) \
                     .props('flat')
