@@ -9,5 +9,5 @@ Wishlist:
 - [x] Rename moments
 - [x] Delete moments
 - [x] Apply moments
-- [ ] Visualize layouts
+- [x] Visualize layouts
 - [ ] Support multiple windows per application
