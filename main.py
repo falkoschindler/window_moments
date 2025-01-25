@@ -12,4 +12,4 @@ with ui.header():
 with ui.row():
     show_moments()
 
-ui.run()
+ui.run(title='Window Moments', favicon='🔲')
