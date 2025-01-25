@@ -2,7 +2,7 @@
 
 This is a tool to manage windows on a Mac.
 
-Wishlist:
+Roadmap:
 
 - [x] Capture moments
 - [x] Recapture moments
@@ -10,4 +10,4 @@ Wishlist:
 - [x] Delete moments
 - [x] Apply moments
 - [x] Visualize layouts
-- [ ] Support multiple windows per application
+- [x] Support multiple windows per application
