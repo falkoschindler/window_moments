@@ -50,7 +50,7 @@ def show_moments():
         ui.label('No moments for this screen setup').classes('text-xl absolute-center')
         return
     for moment in moments:
-        with ui.card().classes('w-96'):
+        with ui.card().classes('w-96 bg-[#0088CC22]').props('bordered flat'):
             ui.input(value=moment.name).props('borderless').classes('text-2xl font-medium') \
                 .on('keydown.enter', lambda e, m=moment: rename_moment(m, e.sender.value)) \
                 .on('keydown.escape', lambda e, m=moment: rename_moment(m, e.sender.value)) \
