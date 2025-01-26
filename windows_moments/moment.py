@@ -45,6 +45,6 @@ class Moment:
         for list_of_bounds in self.windows.values():
             for b in list_of_bounds:
                 svg += (f'<rect x="{b.x}" y="{b.y}" width="{b.width}" height="{b.height}" '
-                        'fill="AliceBlue" stroke="CornflowerBlue" stroke-width="5" />')
+                        'fill="AliceBlue" stroke="CornflowerBlue" stroke-width="5" opacity="0.5" />')
         svg += '</svg>'
         return svg
