@@ -44,8 +44,10 @@ def delete_moment(moment: Moment) -> None:
 @ui.refreshable
 def show_moments():
     moments = [Moment.from_dict(m) for m in app.storage.general.get('moments', {}).values()]
+    screens = collect_screens()
+    moments = [m for m in moments if m.screens == screens]
     if not moments:
-        ui.label('No moments').classes('text-xl absolute-center')
+        ui.label('No moments for this screen setup').classes('text-xl absolute-center')
         return
     for moment in moments:
         with ui.card().classes('w-96'):
